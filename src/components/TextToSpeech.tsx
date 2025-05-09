@@ -172,7 +172,7 @@ const TextToSpeech = () => {
 
     try {
       if (!audioContextRef.current) {
-        audioContextRef.current = new (window.AudioContext )();
+        audioContextRef.current = new (window.AudioContext)();
       }
 
       recordingPreparedRef.current = true;
@@ -216,16 +216,16 @@ const TextToSpeech = () => {
       mediaRecorder.onstop = () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
         const audioUrl = URL.createObjectURL(audioBlob);
-        
+
         const newRecording: RecordedItem = {
           id: `rec-${Date.now()}`,
           text: text,
           url: audioUrl,
           timestamp: Date.now()
         };
-        
+
         setRecordings(prev => [newRecording, ...prev]);
-        
+
         stream.getTracks().forEach(track => track.stop());
         setIsRecording(false);
       };
@@ -311,256 +311,272 @@ const TextToSpeech = () => {
   };
 
   return (
-    <div className="w-full max-w-8xl bg-white dark:bg-slate-800 rounded-lg shadow-md p-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <div className="mb-4">
-            <label htmlFor="textInput" className="block text-md font-medium text-gray-700 dark:text-gray-300 mb-2">
-              ข้อความที่ต้องการพูด
-            </label>
-            <textarea
-              id="textInput"
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-slate-700 dark:text-white"
-              rows={5}
-              value={text}
-              onChange={handleTextChange}
-              placeholder="ป้อนข้อความที่ต้องการพูด...."
-              data-testid="text-input"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label htmlFor="voiceSelect" className="block text-md font-medium text-gray-700 dark:text-gray-300 mb-2">
-              เลือกเสียง
-            </label>
-            <select
-              id="voiceSelect"
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-slate-700 dark:text-white"
-              value={selectedVoice}
-              onChange={handleVoiceChange}
-              data-testid="voice-select"
-            >
-              {voices.map((voice) => (
-                <option key={voice.voiceURI} value={voice.voiceURI}>
-                  {`(${voice.lang}) -->:${voice.name}`}
-                </option>
-              ))}
-            </select>
-            {isThaiVoice && (
-              <p className="mt-1 text-sm text-green-600">เสียงภาษาไทยถูกตรวจสอบแล้ว - ใช้การตั้งค่าที่เหมาะสม</p>
-            )}
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div>
-              <label htmlFor="rateInput" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Rate: {rate.toFixed(1)}
+    <div className="card w-full bg-base-100 shadow-xl">
+      <div className="card-body">
+        <h2 className="card-title">Web Speech API Text-to-Speech</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <div className="form-control w-full mb-4 flex flex-col">
+              <label className="label">
+                <span className="label-text pb-1">ข้อความที่ต้องการพูด</span>
               </label>
-              <input
-                id="rateInput"
-                type="range"
-                min="0.1"
-                max="2"
-                step="0.1"
-                value={rate}
-                onChange={handleRateChange}
-                className="w-full"
-                data-testid="rate-input"
-              />
-              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                ความเร็วในการพูด: 1.0 = ปกติ, &lt;1.0 = ช้าลง, &gt;1.0 = เร็วขึ้น
-              </p>
-              <div className="flex justify-between mt-2">
-                <button 
-                  onClick={() => setRate(0.5)} 
-                  className="px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded"
-                  title="พูดช้า"
+              <textarea
+                className="textarea textarea-bordered h-32 w-full"
+                value={text}
+                onChange={handleTextChange}
+                placeholder="ป้อนข้อความที่ต้องการพูด...."
+                data-testid="text-input"
+              ></textarea>
+            </div>
+
+            <div className="form-control w-full mb-4">
+              <label className="label">
+                <span className="label-text">เลือกเสียง</span>
+              </label>
+              <select
+                className="select select-bordered w-full"
+                value={selectedVoice}
+                onChange={handleVoiceChange}
+                data-testid="voice-select"
+              >
+                {voices.map((voice) => (
+                  <option key={voice.voiceURI} value={voice.voiceURI}>
+                    {`(${voice.lang}) -->:${voice.name}`}
+                  </option>
+                ))}
+              </select>
+              {isThaiVoice && (
+                <label className="label">
+                  <span className="label-text-alt text-success">เสียงภาษาไทยถูกตรวจสอบแล้ว - ใช้การตั้งค่าที่เหมาะสม</span>
+                </label>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Rate: {rate.toFixed(1)}</span>
+                </label>
+                <input
+                  type="range"
+                  min="0.1"
+                  max="2"
+                  step="0.1"
+                  value={rate}
+                  onChange={handleRateChange}
+                  className="range range-primary my-1"
+                  data-testid="rate-input"
+                />
+                <div className="label">
+                  <span className="label-text-alt">ความเร็วในการพูด</span>
+                  <span className="label-text-alt">1.0 = ปกติ</span>
+                </div>
+                <div className="flex justify-between mt-2">
+                  <button
+                    onClick={() => setRate(0.5)}
+                    className="btn btn-xs"
+                    title="พูดช้า"
+                  >
+                    ช้า (0.5)
+                  </button>
+                  <button
+                    onClick={() => setRate(1.0)}
+                    className="btn btn-xs"
+                    title="พูดปกติ"
+                  >
+                    ปกติ (1.0)
+                  </button>
+                  <button
+                    onClick={() => setRate(1.5)}
+                    className="btn btn-xs"
+                    title="พูดเร็ว"
+                  >
+                    เร็ว (1.5)
+                  </button>
+                </div>
+              </div>
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Pitch: {pitch.toFixed(1)}</span>
+                </label>
+                <input
+                  type="range"
+                  min="0.1"
+                  max="2"
+                  step="0.1"
+                  value={pitch}
+                  onChange={handlePitchChange}
+                  className="range range-secondary my-1"
+                  data-testid="pitch-input"
+                />
+                <div className="label">
+                  <span className="label-text-alt">ระดับเสียง</span>
+                  <span className="label-text-alt">1.0 = ปกติ</span>
+                </div>
+                <div className="flex justify-between mt-2">
+                  <button
+                    onClick={() => setPitch(0.5)}
+                    className="btn btn-xs"
+                    title="เสียงต่ำ"
+                  >
+                    ต่ำ (0.5)
+                  </button>
+                  <button
+                    onClick={() => setPitch(1.0)}
+                    className="btn btn-xs"
+                    title="เสียงปกติ"
+                  >
+                    ปกติ (1.0)
+                  </button>
+                  <button
+                    onClick={() => setPitch(1.5)}
+                    className="btn btn-xs"
+                    title="เสียงสูง"
+                  >
+                    สูง (1.5)
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <label className="label">
+                <span className="label-text">ความเร็วเสียงพรีเซ็ต</span>
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  onClick={() => { setRate(0.7); setPitch(0.8); }}
+                  className="btn btn-outline"
                 >
-                  ช้า (0.5)
+                  พูดช้า (ผู้สูงอายุ)
                 </button>
-                <button 
-                  onClick={() => setRate(1.0)} 
-                  className="px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded"
-                  title="พูดปกติ"
+                <button
+                  onClick={() => { setRate(1.0); setPitch(1.0); }}
+                  className="btn btn-outline"
                 >
-                  ปกติ (1.0)
+                  พูดปกติ
                 </button>
-                <button 
-                  onClick={() => setRate(1.5)} 
-                  className="px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded"
-                  title="พูดเร็ว"
+                <button
+                  onClick={() => { setRate(1.3); setPitch(1.1); }}
+                  className="btn btn-outline"
                 >
-                  เร็ว (1.5)
+                  พูดเร็ว (ข่าว)
                 </button>
               </div>
             </div>
-            <div>
-              <label htmlFor="pitchInput" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Pitch: {pitch.toFixed(1)}
-              </label>
-              <input
-                id="pitchInput"
-                type="range"
-                min="0.1"
-                max="2"
-                step="0.1"
-                value={pitch}
-                onChange={handlePitchChange}
-                className="w-full"
-                data-testid="pitch-input"
-              />
-              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                ระดับเสียง: 1.0 = ปกติ, &lt;1.0 = เสียงต่ำ, &gt;1.0 = เสียงสูง
-              </p>
-              <div className="flex justify-between mt-2">
-                <button 
-                  onClick={() => setPitch(0.5)} 
-                  className="px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded"
-                  title="เสียงต่ำ"
-                >
-                  ต่ำ (0.5)
-                </button>
-                <button 
-                  onClick={() => setPitch(1.0)} 
-                  className="px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded"
-                  title="เสียงปกติ"
-                >
-                  ปกติ (1.0)
-                </button>
-                <button 
-                  onClick={() => setPitch(1.5)} 
-                  className="px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded"
-                  title="เสียงสูง"
-                >
-                  สูง (1.5)
-                </button>
+
+            <div className="flex gap-3">
+              <button
+                className={`btn btn-primary flex-1 ${isSpeaking ? 'btn-disabled' : ''}`}
+                onClick={handleSpeak}
+                disabled={isSpeaking || !text}
+                data-testid="speak-button"
+              >
+                {isRecording ? 'Speak & Record' : 'Speak'}
+              </button>
+
+              <button
+                className={`btn btn-error flex-1 ${!isSpeaking ? 'btn-disabled' : ''}`}
+                onClick={handleCancel}
+                disabled={!isSpeaking}
+                data-testid="cancel-button"
+              >
+                Cancel
+              </button>
+            </div>
+
+            <div className="mt-4 text-center">
+              <div className="badge gap-2">
+                {isSpeaking ? (
+                  <span className="text-success">
+                    {isRecording ? 'Speaking & Recording' : 'Speaking'}
+                  </span>
+                ) : (
+                  <span className="text-info">Ready</span>
+                )}
               </div>
+              {hasMicPermission === false && (
+                <div className="alert alert-error mt-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <span>ไม่ได้รับอนุญาตให้ใช้ไมโครโฟน โปรดอนุญาตการใช้ไมโครโฟนในการตั้งค่าเบราว์เซอร์</span>
+                </div>
+              )}
+              {hasMicPermission === true && (
+                <div className="alert alert-success mt-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <span>ได้รับอนุญาตให้ใช้ไมโครโฟนแล้ว พร้อมสำหรับการบันทึกเสียง</span>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-4 text-xs opacity-70">
+              <p>หมายเหตุ: การบันทึกเสียงจะทำงานโดยการรับสัญญาณจากลำโพงผ่านไมโครโฟน ควรใช้หูฟังเพื่อป้องกันการรบกวน</p>
+              <p className="mt-1">เมื่อบันทึกเสียงเสร็จ สามารถฟังหรือดาวน์โหลดได้จากรายการทางด้านขวา</p>
             </div>
           </div>
-          
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              ความเร็วเสียงพรีเซ็ต
-            </label>
-            <div className="grid grid-cols-3 gap-2">
-              <button 
-                onClick={() => { setRate(0.7); setPitch(0.8); }}
-                className="px-3 py-2 bg-indigo-100 text-indigo-800 rounded-md hover:bg-indigo-200 dark:bg-indigo-900 dark:text-indigo-100 dark:hover:bg-indigo-800"
-              >
-                พูดช้า (ผู้สูงอายุ)
-              </button>
-              <button 
-                onClick={() => { setRate(1.0); setPitch(1.0); }}
-                className="px-3 py-2 bg-indigo-100 text-indigo-800 rounded-md hover:bg-indigo-200 dark:bg-indigo-900 dark:text-indigo-100 dark:hover:bg-indigo-800"
-              >
-                พูดปกติ
-              </button>
-              <button 
-                onClick={() => { setRate(1.3); setPitch(1.1); }}
-                className="px-3 py-2 bg-indigo-100 text-indigo-800 rounded-md hover:bg-indigo-200 dark:bg-indigo-900 dark:text-indigo-100 dark:hover:bg-indigo-800"
-              >
-                พูดเร็ว (ข่าว)
-              </button>
-            </div>
-          </div>
+          <div>
+            <h3 className="text-lg font-medium mb-3">บันทึกเสียงของคุณ</h3>
+            <p className="text-sm opacity-70 mb-3">คลิกที่ปุ่ม "เล่นเสียง" เพื่อฟัง หรือ "ดาวน์โหลด" เพื่อบันทึกเสียงไว้ในเครื่อง</p>
 
-          <div className="flex space-x-3">
-            <button
-              className={`flex-1 px-4 py-2 bg-indigo-600 text-white rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${isSpeaking ? 'opacity-50 cursor-not-allowed' : ''}`}
-              onClick={handleSpeak}
-              disabled={isSpeaking || !text}
-              data-testid="speak-button"
-            >
-              {isRecording ? 'Speak & Record' : 'Speak'}
-            </button>
-
-            <button
-              className={`flex-1 px-4 py-2 bg-red-600 text-white rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 ${!isSpeaking ? 'opacity-50 cursor-not-allowed' : ''}`}
-              onClick={handleCancel}
-              disabled={!isSpeaking}
-              data-testid="cancel-button"
-            >
-              Cancel
-            </button>
-          </div>
-
-          <div className="mt-4 text-center text-sm text-gray-500 dark:text-gray-400">
-            Status: <span data-testid="speaking-status" className={isSpeaking ? 'text-green-500' : 'text-sky-300'}>
-              {isSpeaking ? (isRecording ? 'Speaking & Recording' : 'Speaking') : 'Ready'}
-            </span>
-            {hasMicPermission === false && (
-              <p className="text-red-500 mt-1">
-                ไม่ได้รับอนุญาตให้ใช้ไมโครโฟน โปรดอนุญาตการใช้ไมโครโฟนในการตั้งค่าเบราว์เซอร์
-              </p>
-            )}
-            {hasMicPermission === true && (
-              <p className="text-green-500 mt-1">
-                ได้รับอนุญาตให้ใช้ไมโครโฟนแล้ว พร้อมสำหรับการบันทึกเสียง
-              </p>
-            )}
-          </div>
-
-          <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
-            <p>หมายเหตุ: การบันทึกเสียงจะทำงานโดยการรับสัญญาณจากลำโพงผ่านไมโครโฟน ควรใช้หูฟังเพื่อป้องกันการรบกวน</p>
-            <p className="mt-1">เมื่อบันทึกเสียงเสร็จ สามารถฟังหรือดาวน์โหลดได้จากรายการทางด้านขวา</p>
-          </div>
-        </div>
-
-        <div className="border-t pt-4 md:border-t-0 md:border-l md:pt-0 md:pl-6 dark:border-gray-700">
-          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">บันทึกเสียงของคุณ</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">คลิกที่ปุ่ม &quot;เล่นเสียง&quot; เพื่อฟัง หรือ &quot;ดาวน์โหลด&quot; เพื่อบันทึกเสียงไว้ในเครื่อง</p>
-
-          {recordings.length === 0 ? (
-            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-              <p>ยังไม่มีรายการบันทึกเสียง</p>
-              <p className="text-sm mt-2">กดปุ่ม &quot;Speak&quot; เพื่อเริ่มบันทึกเสียง</p>
-            </div>
-          ) : (
-            <ul className="space-y-3 h-full overflow-y-auto pr-2">
-              {recordings.map((recording) => (
-                <li key={recording.id} className="border rounded-lg p-3 dark:border-gray-700">
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="max-w-[80%]">
-                      <p className="font-medium text-gray-900 dark:text-white">{recording.text}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {new Date(recording.timestamp).toLocaleString()}
-                      </p>
+            {recordings.length === 0 ? (
+              <div className="text-center py-8 opacity-70">
+                <div className="alert">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-info shrink-0 w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  <div>
+                    <h3 className="font-bold">ยังไม่มีรายการบันทึกเสียง</h3>
+                    <div className="text-xs">กดปุ่ม "Speak" เพื่อเริ่มบันทึกเสียง</div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+                {recordings.map((recording) => (
+                  <div key={recording.id} className="card bg-base-200">
+                    <div className="card-body p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="max-w-[80%]">
+                          <p className="font-medium">{recording.text}</p>
+                          <div className="flex items-center mt-1">
+                            <span className="text-xs opacity-70">
+                              {new Date(recording.timestamp).toLocaleString()}
+                            </span>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => deleteRecording(recording.id)}
+                          className="btn btn-circle btn-xs btn-error"
+                          title="ลบรายการนี้"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                      </div>
+                      <div className="card-actions justify-start mt-2">
+                        <button
+                          onClick={() => playRecording(recording.url)}
+                          className="btn btn-sm btn-info"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                          </svg>
+                          เล่นเสียง
+                        </button>
+                        <a
+                          href={recording.url}
+                          download={`speech-${recording.timestamp}.wav`}
+                          className="btn btn-sm btn-success"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                          </svg>
+                          ดาวน์โหลด
+                        </a>
+                      </div>
                     </div>
-                    <button
-                      onClick={() => deleteRecording(recording.id)}
-                      className="text-red-500 hover:text-red-700"
-                      title="ลบรายการนี้"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                      </svg>
-                    </button>
                   </div>
-                  <div className="flex items-center">
-                    <button
-                      onClick={() => playRecording(recording.url)}
-                      className="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-md hover:bg-indigo-200 dark:bg-indigo-800 dark:text-indigo-100 dark:hover:bg-indigo-700 text-sm flex items-center"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                      </svg>
-                      เล่นเสียง
-                    </button>
-                    <a
-                      href={recording.url}
-                      download={`speech-${recording.timestamp}.wav`}
-                      className="ml-2 px-3 py-1 bg-green-100 text-green-800 rounded-md hover:bg-green-200 dark:bg-green-800 dark:text-green-100 dark:hover:bg-green-700 text-sm flex items-center"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
-                      </svg>
-                      ดาวน์โหลด
-                    </a>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
