@@ -516,7 +516,7 @@ const TextToSpeech = () => {
           </div>
           <div>
             <h3 className="text-lg font-medium mb-3">บันทึกเสียงของคุณ</h3>
-            <p className="text-sm opacity-70 mb-3">คลิกที่ปุ่ม "เล่นเสียง" เพื่อฟัง หรือ "ดาวน์โหลด" เพื่อบันทึกเสียงไว้ในเครื่อง</p>
+            <p className="text-sm opacity-70 mb-3">คลิกที่ปุ่ม &quot;เล่นเสียง&quot; เพื่อฟัง หรือ &quot;ดาวน์โหลด&quot; เพื่อบันทึกเสียงไว้ในเครื่อง</p>
 
             {recordings.length === 0 ? (
               <div className="text-center py-8 opacity-70">
@@ -524,7 +524,7 @@ const TextToSpeech = () => {
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-info shrink-0 w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                   <div>
                     <h3 className="font-bold">ยังไม่มีรายการบันทึกเสียง</h3>
-                    <div className="text-xs">กดปุ่ม "Speak" เพื่อเริ่มบันทึกเสียง</div>
+                    <div className="text-xs">กดปุ่ม &quot;Speak&quot; เพื่อเริ่มบันทึกเสียง</div>
                   </div>
                 </div>
               </div>
